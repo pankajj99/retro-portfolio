@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pankaj Yadav | Developer Portfolio (Retro 90s Edition)</title>
+    <!-- Google Fonts for retro coding vibes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=MS+Sans+Serif&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="crt-enabled">
+    
+    <!-- CRT Overlay & Vignette -->
+    <div class="crt-screen"></div>
+    <div class="crt-flicker"></div>
+    <div class="crt-scanlines"></div>
+
+    <!-- Theme/Mode Selection Widget (Floating Retro hardware remote) -->
+    <div class="hardware-switcher" id="hardwareSwitcher">
+        <div class="switcher-header">SYSTEM CONSOLE</div>
+        <div class="switcher-body">
+            <button class="switch-btn active" id="btnBoot" onclick="changeMode('boot')">BOOT SCREEN</button>
+            <button class="switch-btn" id="btnDos" onclick="changeMode('dos')">MS-DOS 6.22</button>
+            <button class="switch-btn" id="btnTc" onclick="changeMode('tc')">TURBO C++ 3.0</button>
+            <button class="switch-btn" id="btnWin" onclick="changeMode('win')">WINDOWS 95</button>
+            <div class="divider"></div>
+            <button class="sound-toggle-btn active" id="soundToggle" onclick="toggleSound()">SOUND: ON</button>
+            <button class="crt-toggle-btn active" id="crtToggle" onclick="toggleCRT()">CRT FILTER: ON</button>
+        </div>
+    </div>
+
+    <!-- ================= BOOT SCREEN ================= -->
+    <div class="system-mode active" id="mode-boot">
+        <div class="terminal-container">
+            <div class="boot-text" id="bootText">
+                <!-- Text populated dynamically by JavaScript for DOS boot sequence -->
+            </div>
+            <div class="boot-action hidden" id="bootAction">
+                <p class="blink">=== BOOT SYSTEM DETECTED ===</p>
+                <p>Insert profile.png in retro-portfolio folder for optimal viewing.</p>
+                <button class="boot-btn" onclick="startSystem()">LAUNCH SYSTEM.EXE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MS-DOS CLI MODE ================= -->
+    <div class="system-mode" id="mode-dos">
+        <div class="terminal-container cli-mode">
+            <div class="cli-output" id="cliOutput">
+                <!-- CLI command history and output -->
+                <p>Microsoft(R) MS-DOS(R) Version 6.22</p>
+                <p>(C)Copyright Microsoft Corp 1981-1994.</p>
+                <p>Welcome to Pankaj Yadav's Developer Shell. Type <span class="highlight">HELP</span> for a list of available commands.</p>
+                <p>&nbsp;</p>
+            </div>
+            <div class="cli-input-line">
+                <span class="cli-prompt">C:\PANKAJ&gt;</span>
+                <input type="text" id="cliInput" autocomplete="off" autofocus spellcheck="false" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= TURBO C++ IDE MODE ================= -->
+    <div class="system-mode" id="mode-tc">
+        <div class="tc-ide-container">
+            <!-- IDE Menu Bar -->
+            <div class="tc-menu-bar">
+                <span class="menu-item"><span>F</span>ile</span>
+                <span class="menu-item"><span>E</span>dit</span>
+                <span class="menu-item"><span>S</span>earch</span>
+                <span class="menu-item" onclick="runTCCompiler()"><span>R</span>un</span>
+                <span class="menu-item" onclick="runTCCompiler()"><span>C</span>ompile</span>
+                <span class="menu-item"><span>D</span>ebug</span>
+                <span class="menu-item"><span>P</span>roject</span>
+                <span class="menu-item"><span>O</span>ptions</span>
+                <span class="menu-item"><span>W</span>indow</span>
+                <span class="menu-item"><span>H</span>elp</span>
+            </div>
+
+            <!-- IDE Tabs -->
+            <div class="tc-tabs-bar">
+                <button class="tc-tab active" data-file="ABOUT.CPP" onclick="selectTCFile('ABOUT.CPP')">ABOUT.CPP</button>
+                <button class="tc-tab" data-file="SKILLS.H" onclick="selectTCFile('SKILLS.H')">SKILLS.H</button>
+                <button class="tc-tab" data-file="EXP.CPP" onclick="selectTCFile('EXP.CPP')">EXP.CPP</button>
+                <button class="tc-tab" data-file="PROJECTS.C" onclick="selectTCFile('PROJECTS.C')">PROJECTS.C</button>
+                <button class="tc-tab" data-file="CONTACT.CPP" onclick="selectTCFile('CONTACT.CPP')">CONTACT.CPP</button>
+            </div>
+
+            <!-- IDE Editor Window -->
+            <div class="tc-editor-border">
+                <div class="tc-editor-header">
+                    <span class="tc-win-control">■</span>
+                    <span class="tc-file-name" id="tcFileName">ABOUT.CPP</span>
+                    <span class="tc-win-number">1</span>
+                </div>
+                <div class="tc-editor-content">
+                    <pre><code id="tcCodeText">
+// Loading File...
+                    </code></pre>
+                </div>
+                <div class="tc-editor-scrollbar-y">▲▒▒▒▒▒▒▒▒▒▒▒▼</div>
+                <div class="tc-editor-scrollbar-x">◀▒▒▒▒▒▒▒▒▒▒▒▶</div>
+            </div>
+
+            <!-- IDE Footer Status Bar -->
+            <div class="tc-status-bar">
+                <span>F1 Help</span>
+                <span onclick="alert('File saved to C:\\PANKAJ\\')">F2 Save</span>
+                <span>F3 Open</span>
+                <span onclick="runTCCompiler()">Alt+F9 Compile</span>
+                <span onclick="runTCCompiler()">F9 Make</span>
+                <span>F10 Menu</span>
+            </div>
+        </div>
+
+        <!-- TC Compilation Dialog -->
+        <div class="tc-dialog-overlay" id="tcCompileDialog">
+            <div class="tc-dialog-box">
+                <div class="tc-dialog-header">Compiling</div>
+                <div class="tc-dialog-body">
+                    <div class="dialog-row"><span>Main file:</span><span class="dialog-val" id="compileFile">ABOUT.CPP</span></div>
+                    <div class="dialog-row"><span>Compiling:</span><span class="dialog-val">EDITOR --&gt; MEMORY</span></div>
+                    <div class="dialog-line"></div>
+                    <div class="dialog-row"><span>Lines compiled:</span><span class="dialog-val" id="compileLines">0</span></div>
+                    <div class="dialog-row"><span>Warnings:</span><span class="dialog-val text-green">0</span></div>
+                    <div class="dialog-row"><span>Errors:</span><span class="dialog-val text-green" id="compileErrors">0</span></div>
+                    <div class="dialog-line"></div>
+                    <div class="dialog-row text-center blink" id="compileStatus" style="font-weight: bold; width: 100%;">Compiling...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TC Execution Console Overlay (Runs compiled program) -->
+        <div class="tc-console-overlay" id="tcConsoleWindow">
+            <div class="tc-console-header">
+                <span>C:\PANKAJ\PORTFOLIO.EXE</span>
+                <button class="tc-console-close" onclick="closeTCConsole()">[X]</button>
+            </div>
+            <div class="tc-console-body" id="tcConsoleBody">
+                <!-- Program outputs populated dynamically -->
+            </div>
+            <div class="tc-console-footer">Press any key or click close to return to Editor...</div>
+        </div>
+    </div>
+
+    <!-- ================= WINDOWS 95 MODE ================= -->
+    <div class="system-mode" id="mode-win">
+        <div class="win95-desktop" id="winDesktop">
+            
+            <!-- Desktop Icons -->
+            <div class="desktop-icon" onclick="openWindow('win-resume')">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><path d='M6,2 L20,2 L26,8 L26,30 L6,30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><path d='M20,2 L20,8 L26,8' fill='none' stroke='%23000000' stroke-width='2'/><line x1='10' y1='14' x2='22' y2='14' stroke='%230000ff' stroke-width='2'/><line x1='10' y1='18' x2='22' y2='18' stroke='%230000ff' stroke-width='2'/><line x1='10' y1='22' x2='18' y2='22' stroke='%230000ff' stroke-width='2'/></svg>" alt="WordPad" class="pixel-icon">
+                <span class="icon-label">Resume.wri</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('win-projects')">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><path d='M2,6 L12,6 L15,10 L30,10 L30,28 L2,28 Z' fill='%23ffd700' stroke='%23000000' stroke-width='2'/><path d='M2,10 L30,10' stroke='%23000000' stroke-width='2'/></svg>" alt="Folder" class="pixel-icon">
+                <span class="icon-label">My Projects</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('win-skills')">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><rect x='4' y='4' width='24' height='24' fill='%23cccccc' stroke='%23000000' stroke-width='2'/><line x1='8' y1='10' x2='24' y2='10' stroke='%23ff0000' stroke-width='3'/><line x1='8' y1='16' x2='24' y2='16' stroke='%2300ff00' stroke-width='3'/><line x1='8' y1='22' x2='24' y2='22' stroke='%230000ff' stroke-width='3'/></svg>" alt="Chart" class="pixel-icon">
+                <span class="icon-label">Skills.exe</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('win-mines')">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><circle cx='16' cy='16' r='10' fill='%23000000'/><line x1='16' y1='2' x2='16' y2='30' stroke='%23000000' stroke-width='2'/><line x1='2' y1='16' x2='30' y2='16' stroke='%23000000' stroke-width='2'/><circle cx='12' cy='12' r='2' fill='%23ffffff'/></svg>" alt="Minesweeper" class="pixel-icon">
+                <span class="icon-label">Minesweeper</span>
+            </div>
+
+            <div class="desktop-icon" onclick="openWindow('win-contact')">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><rect x='3' y='6' width='26' height='20' fill='%23ffffff' stroke='%23000000' stroke-width='2'/><polyline points='3,6 16,16 29,6' fill='none' stroke='%23000000' stroke-width='2'/></svg>" alt="Mail" class="pixel-icon">
+                <span class="icon-label">Contact.exe</span>
+            </div>
+
+            <!-- ================= WINDOWS INTERFACE ================= -->
+
+            <!-- Draggable Window: Resume (WordPad) -->
+            <div class="win-window" id="win-resume" style="top: 30px; left: 80px; width: 680px; height: 500px; display: none;">
+                <div class="win-title-bar" onmousedown="dragStart(event, 'win-resume')">
+                    <span class="win-title-text">Resume.wri - WordPad</span>
+                    <div class="win-title-controls">
+                        <button class="win-btn-minimize" onclick="minimizeWindow('win-resume')">_</button>
+                        <button class="win-btn-maximize" onclick="maximizeWindow('win-resume')">🗖</button>
+                        <button class="win-btn-close" onclick="closeWindow('win-resume')">X</button>
+                    </div>
+                </div>
+                <!-- Menu Bar -->
+                <div class="win-window-menu">
+                    <span>File</span><span>Edit</span><span>View</span><span>Insert</span><span>Format</span><span>Help</span>
+                </div>
+                <!-- Window Content -->
+                <div class="win-window-body scrollable-body bg-white">
+                    <div class="wordpad-page">
+                        <!-- Profile Card with Picture -->
+                        <div class="wordpad-header">
+                            <div class="wordpad-photo-frame">
+                                <img src="C:\Users\27pan\.gemini\antigravity\scratch\retro-portfolio\profile.png" id="profilePic" alt="Pankaj Yadav Picture" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' width=\'120\' height=\'150\'><rect width=\'100\' height=\'100\' fill=\'%23555555\'/><text x=\'50\' y=\'55\' font-family=\'monospace\' font-size=\'12\' fill=\'%23ffffff\' text-anchor=\'middle\'>profile.png</text></svg>';">
+                            </div>
+                            <div class="wordpad-contact-info">
+                                <h1 class="wordpad-title">Pankaj Yadav</h1>
+                                <p class="wordpad-subtitle">Java & Web Developer</p>
+                                <hr class="win-hr">
+                                <p><strong>Email:</strong> 27pankaj2002@gmail.com</p>
+                                <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/pankaj-yadav-2709" target="_blank" class="retro-link">Pankaj Yadav Profile</a></p>
+                                <p><strong>Phone:</strong> +91-7228051794</p>
+                                <p><strong>D.O.B:</strong> 27/09/2002</p>
+                            </div>
+                        </div>
+
+                        <h2>Profile Summary</h2>
+                        <p class="wordpad-text">
+                            A dedicated and adaptable fresher with strong problem-solving skills and a foundation in Java Development, aiming to contribute effectively to a collaborative team. Quick learner, adaptable to new technologies and environments. Strong work ethic and dedication to delivering quality work.
+                        </p>
+
+                        <h2>Education</h2>
+                        <table class="win95-table">
+                            <thead>
+                                <tr>
+                                    <th>Institute</th>
+                                    <th>Degree/Board</th>
+                                    <th>Year</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Laxmi Institute of Technology, Sarigam</strong></td>
+                                    <td>Bachelor of Engineering, IT</td>
+                                    <td>2021 - 2025</td>
+                                    <td>CGPA: 7.91</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mother of Hope School, Ashadham</strong></td>
+                                    <td>HSC (GSEB board Class XII)</td>
+                                    <td>2020 - 2021</td>
+                                    <td>45%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mother of Hope School, Ashadham</strong></td>
+                                    <td>SSC (GSEB board Class X)</td>
+                                    <td>2018 - 2019</td>
+                                    <td>71%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>Experience</h2>
+                        <div class="experience-block">
+                            <div class="exp-header">
+                                <span class="exp-title">DataTech Infosoft - Vapi | <strong>Web Developer Intern</strong></span>
+                                <span class="exp-date">Jan'25 - Mar'25</span>
+                            </div>
+                            <ul>
+                                <li>Designed and developed responsive web pages using HTML, CSS, and Bootstrap.</li>
+                                <li>Collaborated with team members to analyze problems and implement solutions.</li>
+                                <li>Assisted in delivering client-based web solutions.</li>
+                                <li>Participated in project discussions and presentations.</li>
+                            </ul>
+                        </div>
+
+                        <div class="experience-block">
+                            <div class="exp-header">
+                                <span class="exp-title">INFOLABZ IT SERVICES PVT. LTD | <strong>React Developer Intern</strong></span>
+                                <span class="exp-date">June'24 - July'24 (15 days)</span>
+                            </div>
+                            <ul>
+                                <li>Developed and maintained web applications using React, contributing to projects.</li>
+                                <li>Gained hands-on experience with the React.js library for building interactive user interfaces.</li>
+                                <li>Acquired exposure to React components, state management, lifecycle methods, React Router, and React Hooks.</li>
+                                <li>Contributed to live projects and modular development through API calls and dynamic data management.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="win-status-bar">
+                    <span>For Help, press F1</span>
+                    <span>NUM</span>
+                </div>
+            </div>
+
+            <!-- Draggable Window: Projects Folder -->
+            <div class="win-window" id="win-projects" style="top: 60px; left: 140px; width: 550px; height: 380px; display: none;">
+                <div class="win-title-bar" onmousedown="dragStart(event, 'win-projects')">
+                    <span class="win-title-text">My Projects</span>
+                    <div class="win-title-controls">
+                        <button class="win-btn-minimize" onclick="minimizeWindow('win-projects')">_</button>
+                        <button class="win-btn-maximize" onclick="maximizeWindow('win-projects')">🗖</button>
+                        <button class="win-btn-close" onclick="closeWindow('win-projects')">X</button>
+                    </div>
+                </div>
+                <div class="win-window-menu">
+                    <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Help</span>
+                </div>
+                <div class="win-window-body scrollable-body bg-white win95-folder-view">
+                    <div class="folder-items">
+                        <div class="folder-item" onclick="openProjectDetails('clms')">
+                            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><rect x='4' y='4' width='24' height='24' rx='4' fill='%234682b4' stroke='%23000000' stroke-width='2'/><text x='16' y='20' font-family='monospace' font-weight='bold' font-size='12' fill='white' text-anchor='middle'>EXE</text></svg>" alt="CLMS EXE">
+                            <span>CLMS.exe</span>
+                        </div>
+                        <div class="folder-item" onclick="openProjectDetails('fuel')">
+                            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><rect x='4' y='4' width='24' height='24' rx='4' fill='%23b22222' stroke='%23000000' stroke-width='2'/><text x='16' y='20' font-family='monospace' font-weight='bold' font-size='12' fill='white' text-anchor='middle'>EXE</text></svg>" alt="FuelFix EXE">
+                            <span>FuelFix.exe</span>
+                        </div>
+                    </div>
+
+                    <hr class="win-hr">
+                    
+                    <!-- Detailed Project pane inside directory -->
+                    <div class="project-details-panel" id="projectDetailsPanel">
+                        <p class="text-muted">Double-click or select a file to view program properties.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Draggable Window: Skills.exe -->
+            <div class="win-window" id="win-skills" style="top: 80px; left: 180px; width: 450px; height: 350px; display: none;">
+                <div class="win-title-bar" onmousedown="dragStart(event, 'win-skills')">
+                    <span class="win-title-text">Skills Analyzer v1.0</span>
+                    <div class="win-title-controls">
+                        <button class="win-btn-minimize" onclick="minimizeWindow('win-skills')">_</button>
+                        <button class="win-btn-maximize" onclick="maximizeWindow('win-skills')">🗖</button>
+                        <button class="win-btn-close" onclick="closeWindow('win-skills')">X</button>
+                    </div>
+                </div>
+                <div class="win-window-body scrollable-body bg-light">
+                    <h3>Technical Skills Audit</h3>
+                    <div class="skills-card">
+                        <div class="skill-meter-group">
+                            <div class="skill-name">Java Development</div>
+                            <div class="skill-bar"><div class="skill-fill" style="width: 85%;"></div></div>
+                            <div class="skill-percentage">85%</div>
+                        </div>
+                        <div class="skill-meter-group">
+                            <div class="skill-name">HTML5 / CSS3</div>
+                            <div class="skill-bar"><div class="skill-fill" style="width: 90%;"></div></div>
+                            <div class="skill-percentage">90%</div>
+                        </div>
+                        <div class="skill-meter-group">
+                            <div class="skill-name">Bootstrap / Styles</div>
+                            <div class="skill-bar"><div class="skill-fill" style="width: 85%;"></div></div>
+                            <div class="skill-percentage">85%</div>
+                        </div>
+                        <div class="skill-meter-group">
+                            <div class="skill-name">React.js</div>
+                            <div class="skill-bar"><div class="skill-fill" style="width: 75%;"></div></div>
+                            <div class="skill-percentage">75%</div>
+                        </div>
+                        <div class="skill-meter-group">
+                            <div class="skill-name">Databases (MySQL)</div>
+                            <div class="skill-bar"><div class="skill-fill" style="width: 80%;"></div></div>
+                            <div class="skill-percentage">80%</div>
+                        </div>
+                        <div class="skill-meter-group">
+                            <div class="skill-name">Figma & Design</div>
+                            <div class="skill-bar"><div class="skill-fill" style="width: 70%;"></div></div>
+                            <div class="skill-percentage">70%</div>
+                        </div>
+                        <div class="skill-meter-group">
+                            <div class="skill-name">Data Structures (DSA)</div>
+                            <div class="skill-bar"><div class="skill-fill" style="width: 75%;"></div></div>
+                            <div class="skill-percentage">75%</div>
+                        </div>
+                    </div>
+
+                    <h3>Soft Skills Audit</h3>
+                    <div class="soft-skills-container">
+                        <span class="win95-badge">TEAMWORK</span>
+                        <span class="win95-badge">PRIORITIZATION</span>
+                        <span class="win95-badge">LEADERSHIP</span>
+                        <span class="win95-badge">MULTI-TASKING</span>
+                        <span class="win95-badge">TIME MANAGEMENT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Draggable Window: Minesweeper -->
+            <div class="win-window" id="win-mines" style="top: 100px; left: 220px; width: 280px; height: 370px; display: none;">
+                <div class="win-title-bar" onmousedown="dragStart(event, 'win-mines')">
+                    <span class="win-title-text">Minesweeper</span>
+                    <div class="win-title-controls">
+                        <button class="win-btn-minimize" onclick="minimizeWindow('win-mines')">_</button>
+                        <button class="win-btn-close" onclick="closeWindow('win-mines')">X</button>
+                    </div>
+                </div>
+                <div class="win-window-body bg-light text-center" style="padding: 10px; overflow: hidden;">
+                    <!-- Minesweeper Header (Smiley Face and counters) -->
+                    <div class="minesweeper-score-panel">
+                        <div class="mine-count" id="mine-counter">010</div>
+                        <div class="smiley-face" id="smiley" onclick="initMinesweeper()">🙂</div>
+                        <div class="timer-count" id="timer-counter">000</div>
+                    </div>
+                    <!-- Minesweeper Canvas Board -->
+                    <div class="mines-grid" id="minesGrid">
+                        <!-- Instantiated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Draggable Window: Contact.exe -->
+            <div class="win-window" id="win-contact" style="top: 120px; left: 260px; width: 450px; height: 380px; display: none;">
+                <div class="win-title-bar" onmousedown="dragStart(event, 'win-contact')">
+                    <span class="win-title-text">Mail Delivery System</span>
+                    <div class="win-title-controls">
+                        <button class="win-btn-minimize" onclick="minimizeWindow('win-contact')">_</button>
+                        <button class="win-btn-maximize" onclick="maximizeWindow('win-contact')">🗖</button>
+                        <button class="win-btn-close" onclick="closeWindow('win-contact')">X</button>
+                    </div>
+                </div>
+                <div class="win-window-body bg-light scrollable-body">
+                    <form class="retro-form" id="retroContactForm" onsubmit="handleContactSubmit(event)">
+                        <div class="form-group">
+                            <label for="contact-name">From Name:</label>
+                            <input type="text" id="contact-name" name="name" required class="win-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Sender Email:</label>
+                            <input type="email" id="contact-email" name="email" required class="win-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-subject">Subject:</label>
+                            <input type="text" id="contact-subject" name="subject" value="Inquiry for Pankaj Yadav" required class="win-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-message">Message Body:</label>
+                            <textarea id="contact-message" name="message" rows="5" required class="win-input"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="win-btn">Send Mail</button>
+                            <button type="reset" class="win-btn">Reset</button>
+                        </div>
+                    </form>
+                    <div id="contactStatus" class="contact-status-log"></div>
+                </div>
+            </div>
+
+            <!-- Windows 95 Start Menu (Appears on click) -->
+            <div class="win-start-menu" id="startMenu">
+                <div class="start-menu-sidebar">
+                    <div class="sidebar-text">Windows<span>95</span></div>
+                </div>
+                <div class="start-menu-items">
+                    <div class="start-item" onclick="openWindow('win-resume'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><path d='M6,2 L20,2 L26,8 L26,30 L6,30 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/></svg>" alt="doc">
+                        <span>Resume WordPad</span>
+                    </div>
+                    <div class="start-item" onclick="openWindow('win-projects'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><path d='M2,6 L12,6 L15,10 L30,10 L30,28 L2,28 Z' fill='%23ffd700' stroke='%23000000' stroke-width='2'/></svg>" alt="folder">
+                        <span>Projects Folder</span>
+                    </div>
+                    <div class="start-item" onclick="openWindow('win-skills'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><rect x='4' y='4' width='24' height='24' fill='%23cccccc' stroke='%23000000' stroke-width='2'/></svg>" alt="skills">
+                        <span>Skills Analyzer</span>
+                    </div>
+                    <div class="start-item" onclick="openWindow('win-mines'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><circle cx='16' cy='16' r='10' fill='%23000000'/></svg>" alt="mines">
+                        <span>Minesweeper</span>
+                    </div>
+                    <div class="start-item" onclick="openWindow('win-contact'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><rect x='3' y='6' width='26' height='20' fill='%23ffffff' stroke='%23000000' stroke-width='2'/></svg>" alt="mail">
+                        <span>Contact Me</span>
+                    </div>
+                    <hr class="win-hr">
+                    <div class="start-item" onclick="changeMode('dos'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><rect width='32' height='32' fill='black'/><text x='16' y='20' font-family='monospace' font-size='12' fill='green' text-anchor='middle'>_&gt;</text></svg>" alt="cli">
+                        <span>MS-DOS Prompt</span>
+                    </div>
+                    <div class="start-item" onclick="changeMode('tc'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><rect width='32' height='32' fill='blue'/><text x='16' y='20' font-family='monospace' font-size='12' fill='yellow' text-anchor='middle'>C++</text></svg>" alt="ide">
+                        <span>Turbo C++ IDE</span>
+                    </div>
+                    <hr class="win-hr">
+                    <div class="start-item" onclick="changeMode('boot'); toggleStartMenu();">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='16' height='16'><circle cx='16' cy='16' r='10' fill='none' stroke='black' stroke-width='2'/><line x1='16' y1='6' x2='16' y2='16' stroke='black' stroke-width='2'/></svg>" alt="shutdown">
+                        <span>Shut Down...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Taskbar at bottom -->
+            <div class="win-taskbar">
+                <button class="win-start-btn" id="startBtn" onclick="toggleStartMenu()">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16'><rect width='16' height='16' fill='%23c0c0c0'/><rect x='2' y='2' width='5' height='5' fill='red'/><rect x='9' y='2' width='5' height='5' fill='green'/><rect x='2' y='9' width='5' height='5' fill='blue'/><rect x='9' y='9' width='5' height='5' fill='yellow'/></svg>" alt="winlogo">
+                    <span>Start</span>
+                </button>
+                <div class="win-taskbar-items" id="taskbarItems">
+                    <!-- Task buttons appear here dynamically when windows are open -->
+                </div>
+                <div class="win-system-tray">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16'><path d='M2,5 L14,5 L14,14 L2,14 Z' fill='none' stroke='black'/><line x1='5' y1='8' x2='11' y2='8' stroke='black'/><line x1='5' y1='11' x2='11' y2='11' stroke='black'/></svg>" alt="sound" onclick="toggleSound()" class="tray-icon">
+                    <span id="winClock">18:24 PM</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Background Matrix Screensaver Canvas (Triggered on request) -->
+    <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
+
+    <!-- Global Sound Synthesizer State Message (Beep Notification) -->
+    <div class="beeper-banner" id="beeperBanner">
+        <span class="beep-lamp"></span> AUDIO ACTIVE (SYNTHESIZED PC SPEAKER)
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
